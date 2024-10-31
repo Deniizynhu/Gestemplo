@@ -12,7 +12,7 @@ if (!defined('ADODB_FETCH_DEFAULT')) define('ADODB_FETCH_DEFAULT', 0);
 if (!defined('ADODB_FETCH_NUM')) define('ADODB_FETCH_NUM', 1);
 if (!defined('ADODB_FETCH_ASSOC')) define('ADODB_FETCH_ASSOC', 2);
 if (!defined('ADODB_FETCH_BOTH')) define('ADODB_FETCH_BOTH', 3);
-define('EW_USE_MYSQLI', TRUE && extension_loaded("mysqli"), TRUE);
+define('EW_USE_MYSQLI', TRUE && extension_loaded("mysqli"));
 
 /**
  * ADOConnection
@@ -767,7 +767,7 @@ class mysqlt_driver_ADOConnection extends ADOConnection
 			$recordset = new ADORecordSet_empty();
 			return $recordset;
 		}
-		$resultset_name = $this->last_module_name . "_ResultSet";
+		$resultset_name = 'mysqlt_driver_ResultSet';
 		$recordset = new $resultset_name( $resultId, $this->connectionId );
 		$recordset->_currentRow = 0;
 		if (EW_USE_MYSQLI) {
@@ -999,11 +999,16 @@ class mysqlt_driver_ResultSet
 	function _fetch()
 	{
 		if (EW_USE_MYSQLI) {
-			$this->fields = @mysqli_fetch_array($this->resultId,$this->fetchMode);
-		} else {
+	$this->connectionId = @mysqli_init();
+@mysqli_real_connect($this->connectionId, $this->host, $this->username, $this->password, $this->database, $this->port, $this->socket, $this->clientFlags);
+
+if (!$this->connectionId) {
+    die('Connection failed: ' . mysqli_connect_error());
+}	
+	 else {
 			$this->fields = @mysql_fetch_array($this->resultId,$this->fetchMode);
 		}
-		return is_array($this->fields);
+		// return is_array($this->fields);
 	}
 
 	/**
