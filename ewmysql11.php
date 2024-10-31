@@ -997,19 +997,18 @@ class mysqlt_driver_ResultSet
 	 */
 
 	function _fetch()
-	{
-		if (EW_USE_MYSQLI) {
-	$this->connectionId = @mysqli_init();
-@mysqli_real_connect($this->connectionId, $this->host, $this->username, $this->password, $this->database, $this->port, $this->socket, $this->clientFlags);
-
-if (!$this->connectionId) {
-    die('Connection failed: ' . mysqli_connect_error());
-}	
-	 else {
-			$this->fields = @mysql_fetch_array($this->resultId,$this->fetchMode);
-		}
-		// return is_array($this->fields);
-	}
+{
+    if (EW_USE_MYSQLI) {
+        if ($this->resultId !== null) {
+            $this->fields = @mysqli_fetch_array($this->resultId, $this->fetchMode);
+        } else {
+            $this->fields = null;
+        }
+    } else {
+        $this->fields = @mysql_fetch_array($this->resultId, $this->fetchMode);
+    }
+    return is_array($this->fields);
+}
 
 	/**
 	 * Check to see if last record reached
