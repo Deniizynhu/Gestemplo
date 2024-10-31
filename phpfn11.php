@@ -56,7 +56,20 @@ function &CurrentMasterTable() {
 
 // Get current detail table object
 function &CurrentDetailTable() {
-	return $GLOBALS["Grid"];
+    if (isset($GLOBALS["Grid"])) {
+        // Certifique-se de que o índice que você está tentando acessar existe
+        if (isset($GLOBALS["Grid"]["some_key"])) {
+            // Acesse o índice de forma segura
+            $value = $GLOBALS["Grid"]["some_key"];
+        } else {
+            // Trate o caso onde o índice não existe
+            $value = null; // ou algum valor padrão adequado
+        }
+    } else {
+        // Trate o caso onde $GLOBALS["Grid"] é nulo
+        $value = null; // ou algum valor padrão adequado
+    }
+    return $value;
 }
 
 // Get PHP errors
